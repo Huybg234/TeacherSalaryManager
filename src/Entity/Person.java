@@ -41,7 +41,7 @@ public class Person implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public void inpormPersonInfo() {
+    public void informInfo() {
         System.out.println("Nhập tên: ");
         this.name = new Scanner(System.in).nextLine();
         System.out.println("Nhập địa chỉ: ");

@@ -4,14 +4,14 @@ import Entity.Subject;
 
 import java.io.Serializable;
 
-public class TeachingSubjectClass implements Serializable {
+public class TeachingTimeSheet implements Serializable {
     private Subject subject;
     private int totalClass;
 
-    public TeachingSubjectClass() {
+    public TeachingTimeSheet() {
     }
 
-    public TeachingSubjectClass(Subject subject, int totalClassList) {
+    public TeachingTimeSheet(Subject subject, int totalClassList) {
         this.subject = subject;
         this.totalClass = totalClassList;
     }

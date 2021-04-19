@@ -62,10 +62,11 @@ public class Teacher extends Person implements Serializable {
         AUTO_ID = autoId;
     }
 
-    public void importTeacherInfo() {
+    @Override
+    public void informInfo() {
         this.setId(Teacher.AUTO_ID);
 
-        super.inpormPersonInfo();
+        super.informInfo();
         System.out.println("Nhập trình độ giảng viên: ");
         System.out.println("1.Giáo sư - Tiến sĩ");
         System.out.println("2.Phó giáo sư - Tiến sĩ");
@@ -80,11 +81,13 @@ public class Teacher extends Person implements Serializable {
                 check = true;
             } catch (Exception e) {
                 System.out.print("Không được nhập ký tự khác ngoài số! Nhập lại: ");
+                check = false;
                 continue;
             }
             if (choice <= 0 || choice > 4) {
                 System.out.print("Nhập số trong khoảng từ 1 đến 4! Nhập lại: ");
                 check = false;
+                continue;
             }
 
             switch (choice) {

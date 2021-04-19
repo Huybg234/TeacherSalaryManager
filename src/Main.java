@@ -1,41 +1,39 @@
 import Entity.Subject;
 import Entity.Teacher;
 import service.FileUtil;
-import teachingTable.TeachingSubjectClass;
 import teachingTable.Teaching;
+import teachingTable.TeachingTimeSheet;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.function.Consumer;
 
-public class Main implements Serializable {
+public class Main {
     private static List<Subject> subjectList = new ArrayList<>();
     private static List<Teacher> teacherList = new ArrayList<>();
     private static List<Teaching> teachingList = new ArrayList<>();
-    private static int allSubject;
 
     public static void main(String[] args) {
+        // đọc file các thứ ở đây
         menu();
     }
 
     public static void menu() {
         do {
-            int funtionChoice = functionChoice();
-            switch (funtionChoice) {
+            int functionChoice = functionChoice();
+            switch (functionChoice) {
                 case 1:
-                    FileUtil.readDataFromFile(subjectList,"MH.txt");
+//                    FileUtil.readDataFromFile(subjectList,"MH.txt");
                     createNewSubject();
                     printSubject();
                     break;
                 case 2:
-                    FileUtil.readDataFromFile(teacherList,"GV.txt");
+//                    FileUtil.readDataFromFile(teacherList,"GV.txt");
                     createNewTeacher();
                     printTeacher();
                     break;
                 case 3:
-                    FileUtil.readDataFromFile(teachingList,"TKGD.txt");
+//                    FileUtil.readDataFromFile(teachingList,"TKGD.txt");
                     createTeachingTable();
                     printTeaching();
                     break;
@@ -80,7 +78,7 @@ public class Main implements Serializable {
 
     public static void createNewSubject() {
         System.out.println("Nhập số lượng môn học: ");
-        allSubject = 0;
+        int allSubject = 0;
         boolean checkSubject = true;
         do {
             try {
@@ -88,6 +86,7 @@ public class Main implements Serializable {
                 checkSubject = true;
             } catch (Exception e) {
                 System.out.println("Không được nhập ký tự khác ngoài số! Nhập lại: ");
+                checkSubject = false;
                 continue;
             }
             if (allSubject <= 0) {
@@ -118,6 +117,7 @@ public class Main implements Serializable {
                 checkTeacher = true;
             } catch (Exception e) {
                 System.out.println("Không được nhập ký tự khác ngoài số! Nhập lại: ");
+                checkTeacher = false;
                 continue;
             }
             if (allTeacher <= 0) {
@@ -127,7 +127,7 @@ public class Main implements Serializable {
         } while (!checkTeacher);
         for (int i = 0; i < allTeacher; i++) {
             Teacher teacher = new Teacher();
-            teacher.importTeacherInfo();
+            teacher.informInfo();
             teacherList.add(teacher);
         }
         FileUtil.writeDataToFile(teacherList, "GV.txt");
@@ -157,14 +157,15 @@ public class Main implements Serializable {
                     check = true;
                 } catch (Exception e) {
                     System.out.println("Không được nhập ký tự khác ngoài số! Nhập lại: ");
+                    check = false;
                     continue;
                 }
-                if (subjectNumber <= 0 || subjectNumber > allSubject) {
+                if (subjectNumber <= 0 || subjectNumber > subjectList.size()) { // <---- dùng subjectList.size()
                     System.out.print("Số môn giảng viên dạy phải lớn hơn 0 và nhỏ hơn tổng số môn! Nhập lại: ");
                     check = false;
                 }
             } while (!check);
-            List<TeachingSubjectClass> tableList = new ArrayList<>();
+            List<TeachingTimeSheet> tableList = new ArrayList<>();
             for (int j = 0; j < subjectNumber; j++) {
                 System.out.print("Nhập id môn thứ " + (j + 1) + " mà giảng viên " + teacherList.get(i).getName() + " dạy: ");
                 int subjectId;
@@ -175,6 +176,7 @@ public class Main implements Serializable {
                         check = true;
                     } catch (Exception e) {
                         System.out.println("không được có ký tự khác ngoài số! Nhập lại: ");
+                        check = false;
                         continue;
                     }
                     Subject subject = searchSubjectId(subjectId);
@@ -193,13 +195,13 @@ public class Main implements Serializable {
                                 check = false;
                             }
                         } while (!check);
-                        tableList.add(new TeachingSubjectClass(subject, totalClass));
+                        // viết hàm tính tổng số tiết của giảng viên
+                        tableList.add(new TeachingTimeSheet(subject, totalClass));
                         break;
                     } else System.out.print("Không có id môn học vừa nhập! Nhập lại: ");
-                    System.out.println("Tổng số tiết của môn thứ " +(j+1)+" là: ");
                 }
                 while (true);
-                System.out.println("");
+                System.out.println();
             }
             Teaching teaching = new Teaching(teacherList.get(i), tableList);
             teachingList.add(teaching);
@@ -230,6 +232,7 @@ public class Main implements Serializable {
                     checkChoice = true;
                 } catch (Exception e) {
                     System.out.println("không được phép có ký tự khác ngoài ký tự số! Nhập lại");
+                    checkChoice = false;
                     continue;
                 }
                 if (choice <= 0 || choice > 3) {
@@ -260,34 +263,34 @@ public class Main implements Serializable {
                 }
             }
         }
-        teachingList.forEach(System.out::println);
+        printTeaching();
     }
 
     public static void sortBySubjectLesson() {
         List<Double> sumLessonList = new ArrayList<>();
-        for (int i=0; i<teachingList.size();i++){
-            System.out.println("---------Tính số tiết học cho giảng viên "+teachingList.get(i).getTeacher().getName()+"---------");
-            for (int j=0; j < teachingList.get(i).getTeachingSubjectClass().size();j++){
-                System.out.println("Tính số tiết học cho môn "+teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getName());
+        for (int i = 0; i < teachingList.size(); i++) {
+            System.out.println("---------Tính số tiết học cho giảng viên " + teachingList.get(i).getTeacher().getName() + "---------");
+            for (int j = 0; j < teachingList.get(i).getTeachingSubjectClass().size(); j++) {
+                System.out.println("Tính số tiết học cho môn " + teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getName());
                 float sumLesson = teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getLessonTotal()
                         * teachingList.get(i).getTeachingSubjectClass().get(j).getTotalClass();
                 System.out.println(sumLesson);
                 sumLessonList.add((double) sumLesson);
             }
-            System.out.println("Tổng số tiết học của giảng viên "+teachingList.get(i).getTeacher().getName()+" là: ");
+            System.out.println("Tổng số tiết học của giảng viên " + teachingList.get(i).getTeacher().getName() + " là: ");
             float temptotal = 0;
-            for (int k=0; k< teachingList.get(i).getTeachingSubjectClass().size();k++){
+            for (int k = 0; k < teachingList.get(i).getTeachingSubjectClass().size(); k++) {
                 temptotal += sumLessonList.get(k);
             }
             System.out.println(temptotal);
             teachingList.get(i).setAllLesson(temptotal);
         }
-        for (int m=0; m< teachingList.size();m++){
-            for (int n= m+1 ; n<teachingList.size();n++){
-                if (teachingList.get(m).getAllLesson()<teachingList.get(n).getAllLesson()){
+        for (int m = 0; m < teachingList.size(); m++) {
+            for (int n = m + 1; n < teachingList.size(); n++) {
+                if (teachingList.get(m).getAllLesson() < teachingList.get(n).getAllLesson()) {
                     Teaching tmp = teachingList.get(m);
-                    teachingList.set(m,teachingList.get(n));
-                    teachingList.set(n,tmp);
+                    teachingList.set(m, teachingList.get(n));
+                    teachingList.set(n, tmp);
                 }
             }
         }
@@ -301,7 +304,7 @@ public class Main implements Serializable {
         }
         for (int i = 0; i < teachingList.size(); i++) {
             System.out.println("-------Tính tiền lương cho giảng viên " + teachingList.get(i).getTeacher().getName() + "---------");
-            for (int j=0; j < teachingList.get(i).getTeachingSubjectClass().size();j++){
+            for (int j = 0; j < teachingList.get(i).getTeachingSubjectClass().size(); j++) {
                 float practice;
                 System.out.println("Tính toán tiền cho môn " + teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getName());
                 System.out.println("Số tiết thực hành :");
@@ -317,6 +320,7 @@ public class Main implements Serializable {
             }
         }
     }
+
     public static Subject searchSubjectId(int id) {
         for (int i = 0; i < subjectList.size(); i++) {
             if (subjectList.get(i).getId() == id) {

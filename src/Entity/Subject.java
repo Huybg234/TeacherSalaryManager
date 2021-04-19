@@ -76,6 +76,7 @@ public class Subject implements Serializable {
                 check = true;
             } catch (Exception e) {
                 System.out.print("Không được nhập ký tự khác ngoài số! Nhập lại: ");
+                check = false;
                 continue;
             }
             if (this.lessonTotal <= 0) {
@@ -90,6 +91,7 @@ public class Subject implements Serializable {
                 check = true;
             } catch (Exception e) {
                 System.out.print("Không được nhập ký tự khác ngoài số! Nhập lại: ");
+                check = false;
                 continue;
             }
             if (this.theoryLesson <= 0) {
@@ -104,6 +106,7 @@ public class Subject implements Serializable {
                 check = true;
             } catch (Exception e) {
                 System.out.print("Không được nhập ký tự khác ngoài số! Nhập lại: ");
+                check = false;
                 continue;
             }
             if (this.expense <= 0) {

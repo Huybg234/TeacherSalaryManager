@@ -1,6 +1,5 @@
 package teachingTable;
 
-import Entity.Subject;
 import Entity.Teacher;
 
 import java.io.Serializable;
@@ -9,14 +8,14 @@ import java.util.List;
 
 public class Teaching implements Serializable {
     private Teacher teacher;
-    private List<TeachingSubjectClass> teachingSubjectClass = new ArrayList<>();
+    private List<TeachingTimeSheet> teachingTimeSheets = new ArrayList<>();
     private float allLesson;
     public Teaching() {
     }
 
-    public Teaching(Teacher teacher, List<TeachingSubjectClass> teachingSubjectClass) {
+    public Teaching(Teacher teacher, List<TeachingTimeSheet> teachingTimeSheets) {
         this.teacher = teacher;
-        this.teachingSubjectClass = teachingSubjectClass;
+        this.teachingTimeSheets = teachingTimeSheets;
     }
 
     public float getAllLesson() {
@@ -35,19 +34,19 @@ public class Teaching implements Serializable {
         this.teacher = teacher;
     }
 
-    public List<TeachingSubjectClass> getTeachingSubjectClass() {
-        return teachingSubjectClass;
+    public List<TeachingTimeSheet> getTeachingSubjectClass() {
+        return teachingTimeSheets;
     }
 
-    public void setTeachingSubjectClass(List<TeachingSubjectClass> teachingSubjectClass) {
-        this.teachingSubjectClass = teachingSubjectClass;
+    public void setTeachingSubjectClass(List<TeachingTimeSheet> teachingTimeSheets) {
+        this.teachingTimeSheets = teachingTimeSheets;
     }
 
     @Override
     public String toString() {
         return "Teaching{" +
                 "teacher=" + teacher +
-                ", teachingSubjectClass=" + teachingSubjectClass +
+                ", teachingSubjectClass=" + teachingTimeSheets +
                 '}';
     }
 }

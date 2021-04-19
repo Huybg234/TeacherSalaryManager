@@ -33,9 +33,11 @@ public class FileUtil implements Serializable {
             return;
         }
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(filename))) {
-            System.out.println((T)objectInputStream.readObject());
+//            System.out.println(objectInputStream.readObject());
+            data.add((T) objectInputStream.readObject());
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
+
 }
