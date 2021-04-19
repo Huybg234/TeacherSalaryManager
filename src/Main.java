@@ -7,6 +7,7 @@ import teachingTable.TeachingTimeSheet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     private static List<Subject> subjectList = new ArrayList<>();
@@ -322,11 +323,15 @@ public class Main {
     }
 
     public static Subject searchSubjectId(int id) {
-        for (int i = 0; i < subjectList.size(); i++) {
-            if (subjectList.get(i).getId() == id) {
-                return subjectList.get(i);
-            }
-        }
-        return null;
+//        for (int i = 0; i < subjectList.size(); i++) {
+//            if (subjectList.get(i).getId() == id) {
+//                return subjectList.get(i);
+//            }
+//        }
+//        return null;
+
+        List<Subject> resultList = subjectList.stream().filter(subject -> subject.getId() == id).collect(Collectors.toList());
+        return !resultList.isEmpty() ? resultList.get(0) : null;
     }
+
 }
