@@ -167,43 +167,54 @@ public class Main {
                 }
             } while (!check);
             List<TeachingTimeSheet> tableList = new ArrayList<>();
-            for (int j = 0; j < subjectNumber; j++) {
-                System.out.print("Nhập id môn thứ " + (j + 1) + " mà giảng viên " + teacherList.get(i).getName() + " dạy: ");
-                int subjectId;
-                int totalClass = 0;
-                do {
-                    try {
-                        subjectId = new Scanner(System.in).nextInt();
-                        check = true;
-                    } catch (Exception e) {
-                        System.out.println("không được có ký tự khác ngoài số! Nhập lại: ");
-                        check = false;
-                        continue;
-                    }
-                    Subject subject = searchSubjectId(subjectId);
-                    if (subject != null) {
-                        System.out.println("Nhập số lớp của môn thứ " + (j + 1) + " mà giảng viên " + teacherList.get(i).getName() + " dạy:");
-                        do {
-                            try {
-                                totalClass = new Scanner(System.in).nextInt();
-                                check = true;
-                            } catch (Exception e) {
-                                System.out.println("Không được có ký tự khác ngoài số! Nhập lại: ");
-                                continue;
-                            }
-                            if (totalClass <= 0 || totalClass > 3) {
-                                System.out.print("Số lớp dạy phải lớn hơn 0 và không lớn hơn 3! Nhập lại: ");
+            do {
+                int sum = 0;
+                for (int j = 0; j < subjectNumber; j++) {
+                    System.out.print("Nhập id môn thứ " + (j + 1) + " mà giảng viên " + teacherList.get(i).getName() + " dạy: ");
+                    int subjectId;
+                    int totalClass = 0;
+                    do {
+                        try {
+                            subjectId = new Scanner(System.in).nextInt();
+                            check = true;
+                        } catch (Exception e) {
+                            System.out.println("không được có ký tự khác ngoài số! Nhập lại: ");
+                            check = false;
+                            continue;
+                        }
+                        Subject subject = searchSubjectId(subjectId);
+                        if (subject != null) {
+                            System.out.println("Nhập số lớp của môn thứ " + (j + 1) + " mà giảng viên " + teacherList.get(i).getName() + " dạy:");
+                            do {
+                                try {
+                                    totalClass = new Scanner(System.in).nextInt();
+                                    check = true;
+                                } catch (Exception e) {
+                                    System.out.println("Không được có ký tự khác ngoài số! Nhập lại: ");
+                                    check = false;
+                                    continue;
+                                }
+                                if (totalClass <= 0 || totalClass > 3) {
+                                    System.out.print("Số lớp dạy phải lớn hơn 0 và không lớn hơn 3! Nhập lại: ");
+                                    check = false;
+                                }
+                            } while (!check);
+                            // viết hàm tính tổng số tiết của giảng viên
+                            sum += subjectList.get(j).getLessonTotal() * totalClass;
+                            System.out.println(sum);
+                            if (sum > 200) {
+                                System.out.println("Tổng số tiết học vượt quá 200! Nhập lại từ đầu cho giảng viên này nhé: ");
                                 check = false;
+                                break;
                             }
-                        } while (!check);
-                        // viết hàm tính tổng số tiết của giảng viên
-                        tableList.add(new TeachingTimeSheet(subject, totalClass));
-                        break;
-                    } else System.out.print("Không có id môn học vừa nhập! Nhập lại: ");
+                            else check = true;
+                            tableList.add(new TeachingTimeSheet(subject, totalClass));
+                            break;
+                        } else System.out.print("Không có id môn học vừa nhập! Nhập lại: ");
+                    } while (true);
                 }
-                while (true);
-                System.out.println();
-            }
+            } while (!check);
+
             Teaching teaching = new Teaching(teacherList.get(i), tableList);
             teachingList.add(teaching);
         }
@@ -268,30 +279,23 @@ public class Main {
     }
 
     public static void sortBySubjectLesson() {
-        List<Double> sumLessonList = new ArrayList<>();
-        for (int i = 0; i < teachingList.size(); i++) {
-            System.out.println("---------Tính số tiết học cho giảng viên " + teachingList.get(i).getTeacher().getName() + "---------");
-            for (int j = 0; j < teachingList.get(i).getTeachingSubjectClass().size(); j++) {
-                System.out.println("Tính số tiết học cho môn " + teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getName());
-                float sumLesson = teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getLessonTotal()
-                        * teachingList.get(i).getTeachingSubjectClass().get(j).getTotalClass();
-                System.out.println(sumLesson);
-                sumLessonList.add((double) sumLesson);
-            }
-            System.out.println("Tổng số tiết học của giảng viên " + teachingList.get(i).getTeacher().getName() + " là: ");
-            float temptotal = 0;
-            for (int k = 0; k < teachingList.get(i).getTeachingSubjectClass().size(); k++) {
-                temptotal += sumLessonList.get(k);
-            }
-            System.out.println(temptotal);
-            teachingList.get(i).setAllLesson(temptotal);
-        }
+        lessonCalculation();
         for (int m = 0; m < teachingList.size(); m++) {
             for (int n = m + 1; n < teachingList.size(); n++) {
                 if (teachingList.get(m).getAllLesson() < teachingList.get(n).getAllLesson()) {
                     Teaching tmp = teachingList.get(m);
                     teachingList.set(m, teachingList.get(n));
                     teachingList.set(n, tmp);
+                }
+            }
+            for (int l = 0; l < teachingList.get(m).teachingTimeSheets().size(); l++) {
+                for (int h = l + 1; h < teachingList.get(m).teachingTimeSheets().size(); h++) {
+                    if (teachingList.get(m).teachingTimeSheets().get(l).getTotallesson()
+                            < teachingList.get(m).teachingTimeSheets().get(h).getTotallesson()) {
+                        TeachingTimeSheet tmp2 = teachingList.get(m).teachingTimeSheets().get(l);
+                        teachingList.get(m).teachingTimeSheets().set(l, teachingList.get(m).teachingTimeSheets().get(h));
+                        teachingList.get(m).teachingTimeSheets().set(h, tmp2);
+                    }
                 }
             }
         }
@@ -305,18 +309,18 @@ public class Main {
         }
         for (int i = 0; i < teachingList.size(); i++) {
             System.out.println("-------Tính tiền lương cho giảng viên " + teachingList.get(i).getTeacher().getName() + "---------");
-            for (int j = 0; j < teachingList.get(i).getTeachingSubjectClass().size(); j++) {
+            for (int j = 0; j < teachingList.get(i).teachingTimeSheets().size(); j++) {
                 float practice;
-                System.out.println("Tính toán tiền cho môn " + teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getName());
+                System.out.println("Tính toán tiền cho môn " + teachingList.get(i).teachingTimeSheets().get(j).getSubject().getName());
                 System.out.println("Số tiết thực hành :");
-                practice = teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getLessonTotal()
-                        - teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getTheoryLesson();
+                practice = teachingList.get(i).teachingTimeSheets().get(j).getSubject().getLessonTotal()
+                        - teachingList.get(i).teachingTimeSheets().get(j).getSubject().getTheoryLesson();
                 System.out.println(practice);
                 System.out.println("Chi phí cho môn học này là: ");
-                float sum = (teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getTheoryLesson()
-                        * teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getExpense()
-                        + practice * teachingList.get(i).getTeachingSubjectClass().get(j).getSubject().getExpense() * 70 / 100)
-                        * teachingList.get(i).getTeachingSubjectClass().get(j).getTotalClass();
+                float sum = (teachingList.get(i).teachingTimeSheets().get(j).getSubject().getTheoryLesson()
+                        * teachingList.get(i).teachingTimeSheets().get(j).getSubject().getExpense()
+                        + practice * teachingList.get(i).teachingTimeSheets().get(j).getSubject().getExpense() * 70 / 100)
+                        * teachingList.get(i).teachingTimeSheets().get(j).getTotalClass();
                 System.out.println(sum);
             }
         }
@@ -334,4 +338,25 @@ public class Main {
         return !resultList.isEmpty() ? resultList.get(0) : null;
     }
 
+    public static void lessonCalculation() {
+        for (int i = 0; i < teachingList.size(); i++) {
+            List<Double> sumLessonList = new ArrayList<>();
+            System.out.println("---------Tính số tiết học cho giảng viên " + teachingList.get(i).getTeacher().getName() + "---------");
+            for (int j = 0; j < teachingList.get(i).teachingTimeSheets().size(); j++) {
+                System.out.println("Tính số tiết học cho môn " + teachingList.get(i).teachingTimeSheets().get(j).getSubject().getName());
+                float sumLesson = teachingList.get(i).teachingTimeSheets().get(j).getSubject().getLessonTotal()
+                        * teachingList.get(i).teachingTimeSheets().get(j).getTotalClass();
+                System.out.println(sumLesson);
+                sumLessonList.add((double) sumLesson);
+                teachingList.get(i).teachingTimeSheets().get(j).setTotallesson((int) sumLesson);
+            }
+            System.out.println("Tổng số tiết học của giảng viên " + teachingList.get(i).getTeacher().getName() + " là: ");
+            float temptotal = 0;
+            for (int k = 0; k < teachingList.get(i).teachingTimeSheets().size(); k++) {
+                temptotal += sumLessonList.get(k);
+            }
+            System.out.println(temptotal);
+            teachingList.get(i).setAllLesson(temptotal);
+        }
+    }
 }

@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class TeachingTimeSheet implements Serializable {
     private Subject subject;
     private int totalClass;
+    private int totallesson;
 
     public TeachingTimeSheet() {
     }
@@ -14,6 +15,14 @@ public class TeachingTimeSheet implements Serializable {
     public TeachingTimeSheet(Subject subject, int totalClassList) {
         this.subject = subject;
         this.totalClass = totalClassList;
+    }
+
+    public int getTotallesson() {
+        return totallesson;
+    }
+
+    public void setTotallesson(int totallesson) {
+        this.totallesson = totallesson;
     }
 
     public Subject getSubject() {

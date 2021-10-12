@@ -25,19 +25,16 @@ public class FileUtil implements Serializable {
         }
     }
 
-    public static <T> void readDataFromFile(List<T> data, String filename){
-        if (DataUtil.isEmptyCollection(data)){
-            return;
-        }
+    public static List readDataFromFile(String filename){
         if (!StringUtil.isEmptyString(filename)){
-            return;
+            return null;
         }
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(filename))) {
-//            System.out.println(objectInputStream.readObject());
-            data.add((T) objectInputStream.readObject());
+            return (List) objectInputStream.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 }

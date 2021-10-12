@@ -34,7 +34,7 @@ public class Teaching implements Serializable {
         this.teacher = teacher;
     }
 
-    public List<TeachingTimeSheet> getTeachingSubjectClass() {
+    public List<TeachingTimeSheet>teachingTimeSheets() {
         return teachingTimeSheets;
     }
 
